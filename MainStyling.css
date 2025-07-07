@@ -1,0 +1,103 @@
+
+body{
+    background-image: url('image.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.trampoline {
+    position: absolute;
+    top: 170px;
+    left: 530px;
+    width: 300px; 
+    transition: color .2s;
+}
+.balloon {
+    position: absolute;
+    top: 170px;
+    left: 1220px;
+    width: 300px; 
+    transition: color .2s;
+}
+
+.shape {
+    position: absolute;
+    top: 345px;
+    left: 868px;
+    width: 300px; 
+    transition: color .2s;
+}
+
+.block {
+    position: absolute;
+    top: 545px;
+    left: 560px;
+    width: 300px; 
+    transition: color .2s;
+}
+
+.letter{
+    position: absolute;
+    top: 543px;
+    left: 1220px;
+    width: 300px; 
+    transition: color .2s;
+}
+
+ .trampoline a{
+    text-decoration: none;  
+    color: black;            
+    font-size: 18px;
+    padding: 10px 15px;
+    transition: color .2s;
+}
+
+.trampoline a:hover{
+    color:darkred;
+}
+
+.balloon a:hover{
+    color:darkred;
+}
+
+.shape a:hover{
+    color:darkgoldenrod;
+}
+
+.block a:hover{
+    color:darkcyan;
+}
+
+.letter a:hover{
+    color:darkcyan;
+}
+
+.balloon a{
+    text-decoration: none;  
+    color: black;            
+    font-size: 18px;
+    padding: 10px 15px;  transition: color .2s;
+}
+
+.shape a{
+    text-decoration: none;  
+    color: black;            
+    font-size: 18px;
+    padding: 10px 15px;  transition: color .2s;
+}
+
+.block a{
+    text-decoration: none;  
+    color: black;            
+    font-size: 18px;
+    padding: 10px 15px;  transition: color .2s;
+}
+
+.letter a{
+    text-decoration: none;  
+    color: black;            
+    font-size: 18px;
+    padding: 10px 15px;  transition: color .2s;
+}

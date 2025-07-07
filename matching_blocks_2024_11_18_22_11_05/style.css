@@ -1,0 +1,49 @@
+html, body {
+  margin: 0;
+  padding: 0;
+
+  /*uses 85% height of viewport*/
+  height: 85%;
+  /*uses flexbox, centers horizontally, then centers vertically*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /*Styles the background*/
+    background-image: url('image.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.centeredDiv {
+  /*centers using flexbox, column (vertically), center (centers horizontally)*/
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+canvas {
+  /*This will remove unwanted space surrounding the canvas*/
+  display: block;
+}
+
+/*Styles the return to menu link*/
+.returnToMenu {
+
+  /*adds space above link*/
+  margin-top: 35px; 
+  /*removes underline*/
+  text-decoration: none;
+  font-size: 20px;
+  color: whitesmoke;
+  outline: darkgoldenrod;
+  /*transition for color change*/
+  transition: color .2s;
+}
+
+/*Changes the color to dark yellow when hovered*/
+.returnToMenu:hover{
+  color:darkgoldenrod;
+}
