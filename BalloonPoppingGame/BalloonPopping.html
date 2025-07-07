@@ -6,18 +6,44 @@
     <title>Balloon Popping Game</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <style>
-        body { text-align: center; background: #87CEEB; }
-        canvas { border: 1px solid #000; }
+        body {
+            text-align: center;
+            background: #87CEEB;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            border: 2px solid #000;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #fff;
+            border: 2px solid #000;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
-    <h1>Pop the Balloons!</h1>
-    
+    <h1>🎈 Pop the Balloons! 🎈</h1>
 
-</main>
-<script src="p5.js"></script>
-<!--<script src="p5.sound.min.js"></script> -->
-<script src="game.js"></script>
+    <!-- p5.js will create the canvas here -->
+    <div class="button-container" id="replay-button-container">
+        <!-- Replay button will be added here by p5.js -->
+    </div>
+
+    <script src="game.js"></script>
 </body>
 </html>
-
