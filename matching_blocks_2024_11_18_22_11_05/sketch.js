@@ -1,128 +1,112 @@
 let shapes = [];
 let holes = [];
 let draggedShape = null;
-let startTime, elapsedTime;
+let startTime;
 let gameCompleted = false;
+let ding, wrong;
+let newGameButton;
 
-let ding;
-let wrong;
+function preload() {
+  ding = loadSound('ding.wav');
+  wrong = loadSound('wrong.wav');
+}
 
 function setup() {
-  createCanvas(500, 500);
+  createCanvas(700, 700);
+  newGameButton = createButton("🔁 New Game");
+  newGameButton.position(640, height - 400); // Move closer to bottom edge of canvas
+  newGameButton.mousePressed(resetGame);
+  // newGameButton.hide();
   resetGame();
 }
 
-function preload() {
-  ding = loadSound('ding.wav'); // Ensure the correct path to the sound file
-  wrong = loadSound('wrong.wav'); // Ensure the correct path to the sound file
-}
 
 function draw() {
-  background(155, 216, 255);
+  background(200, 240, 255);
   displayTimer();
 
-  // Draw the holes
-  for (let hole of holes) {
-    noStroke();
-    fill(hole.color);
-
-    if (hole.shape === 'circle') {
-      ellipse(hole.x, hole.y, 60);
-    } else if (hole.shape === 'square') {
-      rect(hole.x - 30, hole.y - 30, 60, 60);
-    } else if (hole.shape === 'triangle') {
-      triangle(hole.x, hole.y, hole.x + 30, hole.y - 50, hole.x + 60, hole.y);
-    } else if (hole.shape === 'rect') {
-      rect(hole.x - 30, hole.y - 15, 60, 30);
-    } else if (hole.shape === 'pentagon') {
-      beginShape();
-      for (let a = 0; a < TWO_PI; a += TWO_PI / 5) {
-        let sx = hole.x + cos(a) * 30;
-        let sy = hole.y + sin(a) * 30;
-        vertex(sx, sy);
-      }
-      endShape(CLOSE);
-    } else if (hole.shape === 'hexagon') {
-      beginShape();
-      for (let a = 0; a < TWO_PI; a += TWO_PI / 6) {
-        let sx = hole.x + cos(a) * 30;
-        let sy = hole.y + sin(a) * 30;
-        vertex(sx, sy);
-      }
-      endShape(CLOSE);
-    } else if (hole.shape === 'star') {
-      beginShape();
-      for (let a = 0; a < TWO_PI; a += PI / 5) {
-        let r = (a % (PI / 2.5) === 0) ? 30 : 15;
-        let sx = hole.x + cos(a) * r;
-        let sy = hole.y + sin(a) * r;
-        vertex(sx, sy);
-      }
-      endShape(CLOSE);
-    } else if (hole.shape === 'oval') {
-      ellipse(hole.x, hole.y, 60, 30);
-    }
-  }
-
-  // Draw the shapes (blocks)
-  for (let shape of shapes) {
-    fill(shape.color);
-    stroke(255);
-
-    if (shape.shape === 'circle') {
-      ellipse(shape.x, shape.y, 50);
-    } else if (shape.shape === 'square') {
-      rect(shape.x - 25, shape.y - 25, 50, 50);
-    } else if (shape.shape === 'triangle') {
-      triangle(shape.x, shape.y, shape.x + 30, shape.y - 50, shape.x + 60, shape.y);
-    } else if (shape.shape === 'rect') {
-      rect(shape.x - 30, shape.y - 15, 60, 30);
-    } else if (shape.shape === 'pentagon') {
-      beginShape();
-      for (let a = 0; a < TWO_PI; a += TWO_PI / 5) {
-        let sx = shape.x + cos(a) * 25;
-        let sy = shape.y + sin(a) * 25;
-        vertex(sx, sy);
-      }
-      endShape(CLOSE);
-    } else if (shape.shape === 'hexagon') {
-      beginShape();
-      for (let a = 0; a < TWO_PI; a += TWO_PI / 6) {
-        let sx = shape.x + cos(a) * 25;
-        let sy = shape.y + sin(a) * 25;
-        vertex(sx, sy);
-      }
-      endShape(CLOSE);
-    } else if (shape.shape === 'star') {
-      beginShape();
-      for (let a = 0; a < TWO_PI; a += PI / 5) {
-        let r = (a % (PI / 2.5) === 0) ? 25 : 12;
-        let sx = shape.x + cos(a) * r;
-        let sy = shape.y + sin(a) * r;
-        vertex(sx, sy);
-      }
-      endShape(CLOSE);
-    } else if (shape.shape === 'oval') {
-      ellipse(shape.x, shape.y, 50, 25);
-    }
-  }
+  for (let hole of holes) drawHole(hole);
+  for (let shape of shapes) drawShape(shape);
 
   checkCompletion();
 }
 
-function displayTimer() {
-  if (!gameCompleted) {
-    elapsedTime = millis() - startTime;
-    fill(0);
-    textSize(16);
-    text("Time: " + (elapsedTime / 1000).toFixed(2) + "s", 10, 20);
+function drawHole(hole) {
+  noStroke();
+  fill(50);
+  drawShapeByType(hole.x, hole.y, hole.shape, 30, true);
+}
+
+function drawShape(shape) {
+  fill(shape.color);
+  stroke(255);
+  drawShapeByType(shape.x, shape.y, shape.shape, 25, false);
+}
+
+function drawShapeByType(x, y, type, size, isHole) {
+  switch (type) {
+    case 'circle':
+      ellipse(x, y, size * 2);
+      break;
+    case 'square':
+      rect(x - size, y - size, size * 2, size * 2);
+      break;
+    case 'triangle':
+      triangle(x - size, y + size, x, y - size, x + size, y + size);
+      break;
+    case 'rect':
+      rect(x - size, y - size / 2, size * 2, size);
+      break;
+    case 'pentagon':
+      beginShape();
+      for (let i = 0; i < 5; i++) {
+        let angle = TWO_PI / 5 * i - PI / 2;
+        vertex(x + cos(angle) * size, y + sin(angle) * size);
+      }
+      endShape(CLOSE);
+      break;
+    case 'hexagon':
+      beginShape();
+      for (let i = 0; i < 6; i++) {
+        let angle = TWO_PI / 6 * i - PI / 2;
+        vertex(x + cos(angle) * size, y + sin(angle) * size);
+      }
+      endShape(CLOSE);
+      break;
+    case 'star':
+      beginShape();
+      for (let i = 0; i < 10; i++) {
+        let angle = PI / 5 * i;
+        let r = i % 2 === 0 ? size : size / 2;
+        vertex(x + cos(angle) * r, y + sin(angle) * r);
+      }
+      endShape(CLOSE);
+      break;
+    case 'oval':
+      ellipse(x, y, size * 2, size);
+      break;
+  }
+}
+
+function isMouseOverShape(shape) {
+  switch (shape.shape) {
+    case 'triangle':
+      return collidePointTriangle(mouseX, mouseY,
+        shape.x - 25, shape.y + 25,
+        shape.x, shape.y - 25,
+        shape.x + 25, shape.y + 25);
+    case 'square':
+    case 'rect':
+      return (mouseX >= shape.x - 30 && mouseX <= shape.x + 30 &&
+              mouseY >= shape.y - 30 && mouseY <= shape.y + 30);
+    default:
+      return dist(mouseX, mouseY, shape.x, shape.y) < 30;
   }
 }
 
 function mousePressed() {
   for (let shape of shapes) {
-    let d = dist(mouseX, mouseY, shape.x, shape.y);
-    if (d < 30) {
+    if (isMouseOverShape(shape)) {
       shape.dragging = true;
       shape.offsetX = mouseX - shape.x;
       shape.offsetY = mouseY - shape.y;
@@ -141,24 +125,37 @@ function mouseDragged() {
 
 function mouseReleased() {
   if (draggedShape) {
-    let correctHole = holes.find(
-      hole => hole.shape === draggedShape.shape && dist(hole.x, hole.y, draggedShape.x, draggedShape.y) < 30
+    let match = holes.find(hole =>
+      hole.shape === draggedShape.shape &&
+      dist(hole.x, hole.y, draggedShape.x, draggedShape.y) < 35
     );
 
-    if (correctHole) {
-      // If the dragged shape is correctly placed
-      draggedShape.x = correctHole.x;
-      draggedShape.y = correctHole.y;
-      ding.play(); // Play correct placement sound
+    if (match) {
+      draggedShape.x = match.x;
+      draggedShape.y = match.y;
+      ding.play();
     } else {
-      // If the dragged shape is not correctly placed
-      draggedShape.x = shapes[shapes.indexOf(draggedShape)].initialX;
-      draggedShape.y = shapes[shapes.indexOf(draggedShape)].initialY;
-      wrong.play(); // Play incorrect placement sound
+      draggedShape.x = draggedShape.initialX;
+      draggedShape.y = draggedShape.initialY;
+      wrong.play();
     }
 
     draggedShape.dragging = false;
     draggedShape = null;
+  }
+}
+
+function displayTimer() {
+  if (!gameCompleted) {
+    let elapsed = (millis() - startTime) / 1000;
+    fill(0);
+    textSize(16);
+    text(`Time: ${elapsed.toFixed(2)}s`, 10, 20);
+  } else {
+    textSize(32);
+    fill(0, 150, 0);
+    textAlign(CENTER, CENTER);
+    text("You Win!", width / 2, height / 2);
   }
 }
 
@@ -169,34 +166,65 @@ function checkCompletion() {
   });
 
   if (gameCompleted) {
-    noLoop(); // Stop the draw loop
-    console.log("Game completed in " + (elapsedTime / 1000).toFixed(2) + " seconds!");
+    noLoop();
+    newGameButton.show(); // Show button after winning
   }
 }
 
 function resetGame() {
-  shapes = [
-    { x: random(50, 150), y: random(50, 150), color: [255, 0, 0], shape: 'circle', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(50, 150), y: random(150, 250), color: [0, 255, 0], shape: 'square', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(50, 150), y: random(250, 350), color: [0, 0, 255], shape: 'triangle', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(50, 150), y: random(350, 450), color: [255, 255, 0], shape: 'rect', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(150, 250), y: random(50, 150), color: [255, 0, 255], shape: 'pentagon', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(150, 250), y: random(150, 250), color: [0, 255, 255], shape: 'hexagon', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(150, 250), y: random(250, 350), color: [255, 165, 0], shape: 'star', dragging: false, offsetX: 0, offsetY: 0 },
-    { x: random(150, 250), y: random(350, 450), color: [128, 0, 128], shape: 'oval', dragging: false, offsetX: 0, offsetY: 0 }
+  let usedPositions = [];
+
+  const getRandomPosition = () => {
+    let x, y, tooClose;
+    do {
+      x = random(100, width - 100);
+      y = random(100, height - 100);
+      tooClose = usedPositions.some(pos => dist(pos.x, pos.y, x, y) < 80);
+    } while (tooClose);
+    usedPositions.push({ x, y });
+    return { x, y };
+  };
+
+  const shapeList = [
+    { shape: 'circle', color: [255, 0, 0] },
+    { shape: 'square', color: [0, 255, 0] },
+    { shape: 'triangle', color: [0, 0, 255] },
+    { shape: 'rect', color: [255, 255, 0] },
+    { shape: 'pentagon', color: [255, 0, 255] },
+    { shape: 'hexagon', color: [0, 255, 255] },
+    { shape: 'star', color: [255, 165, 0] },
+    { shape: 'oval', color: [128, 0, 128] }
   ];
 
-  holes = [
-    { x: random(300, 400), y: random(50, 150), color: [0, 0, 0], shape: 'circle' },
-    { x: random(300, 400), y: random(150, 250), color: [0, 0, 0], shape: 'square' },
-    { x: random(300, 400), y: random(250, 350), color: [0, 0, 0], shape: 'triangle' },
-    { x: random(300, 400), y: random(350, 450), color: [0, 0, 0], shape: 'rect' },
-    { x: random(400, 500), y: random(50, 150), color: [0, 0, 0], shape: 'pentagon' },
-    { x: random(400, 500), y: random(150, 250), color: [0, 0, 0], shape: 'hexagon' },
-    { x: random(400, 500), y: random(250, 350), color: [0, 0, 0], shape: 'star' },
-    { x: random(400, 500), y: random(350, 450), color: [0, 0, 0], shape: 'oval' }
-  ];
+  shapes = [];
+  holes = [];
+
+  for (let s of shapeList) {
+    let shapePos = getRandomPosition();
+    let holePos = getRandomPosition();
+
+    shapes.push(makeShape(shapePos.x, shapePos.y, s.shape, s.color));
+    holes.push(makeHole(holePos.x, holePos.y, s.shape));
+  }
 
   startTime = millis();
-  loop(); // Restart the draw loop
+  gameCompleted = false;
+  // newGameButton.hide(); // Hide button on restart
+  loop();
+}
+
+function makeShape(x, y, shape, color) {
+  return { x, y, initialX: x, initialY: y, shape, color, dragging: false, offsetX: 0, offsetY: 0 };
+}
+
+function makeHole(x, y, shape) {
+  return { x, y, shape };
+}
+
+function collidePointTriangle(px, py, x1, y1, x2, y2, x3, y3) {
+  let areaOrig = abs((x2 - x1)*(y3 - y1) - (x3 - x1)*(y2 - y1));
+  let area1 = abs((x1 - px)*(y2 - py) - (x2 - px)*(y1 - py));
+  let area2 = abs((x2 - px)*(y3 - py) - (x3 - px)*(y2 - py));
+  let area3 = abs((x3 - px)*(y1 - py) - (x1 - px)*(y3 - py));
+  return (area1 + area2 + area3) === areaOrig;
 }

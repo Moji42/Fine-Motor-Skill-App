@@ -37,12 +37,13 @@ function draw() {
 }
 
 function drawGame() {
+    textAlign(LEFT, TOP); // Reset alignment for normal score display
+
     for (let i = balloons.length - 1; i >= 0; i--) {
         let balloon = balloons[i];
         balloon.update();
         balloon.display();
 
-        // FIXED: check if the balloon has gone off the TOP of the screen
         if (balloon.alive && balloon.y + balloon.radius < 0) {
             missedBalloons++;
             balloon.alive = false;
@@ -60,9 +61,10 @@ function drawGame() {
 
     fill(0);
     textSize(20);
-    text("Score: " + score, 10, 30);
-    text("Missed: " + missedBalloons, 10, 50);
+    text("Score: " + score, 10, 10);
+    text("Missed: " + missedBalloons, 10, 35);
 }
+
 
 
 function drawGameOverScreen() {
@@ -88,7 +90,9 @@ function resetGame() {
     gameWon = false;
     balloons = [];
     replayButton.hide();
+    replayButton.position(width / 2 - 50, height / 2 + 50); // Reset position
 }
+
 
 // Balloon class
 class Balloon {
