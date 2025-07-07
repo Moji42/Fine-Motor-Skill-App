@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shape Matching Game</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: url('lego-background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .game-container {
+      background-color: #f0f8ff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      text-align: center;
+      max-width: 900px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #111;
+    }
+
+    canvas {
+      border: 2px solid #000;
+      margin-top: 10px;
+    }
+
+    .button-container {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #fff;
+      border: 2px solid #000;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game-container">
+    <h1>Letter Match!</h1>
+
+    <!-- p5.js canvas will appear here -->
+    <div id="sketch-container"></div>
+
+    <div class="button-container">
+      <button onclick="goBack()">⬅️ Back to Home</button>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      window.location.href = "../MainMenu.html"; 
+    }
+  </script>
+
+  <script src="gameImplemented.js"></script>
+</body>
+</html>
