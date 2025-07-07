@@ -1,10 +1,13 @@
 let balloons = [];
 let score = 0;
-const targetScore = 10; // Target score to win
+const targetScore = 10;
 let gameOver = false;
-let missedBalloons = 0; // Count of missed balloons
+let gameWon = false;
+let missedBalloons = 0;
 
-// Define an array of colors
+let replayButton;
+
+// Balloon colors
 const colors = [
     { name: "purple", value: [128, 0, 128] },
     { name: "green", value: [0, 255, 0] },
@@ -15,47 +18,76 @@ const colors = [
 function setup() {
     createCanvas(800, 600);
     frameRate(30);
-    setInterval(addBalloon, 1000); // Add a balloon every second
+    setInterval(addBalloon, 1000);
+    replayButton = createButton("Play Again");
+    replayButton.position(width / 2 - 50, height / 2 + 50);
+    replayButton.mousePressed(resetGame);
+    replayButton.hide(); // Hide until game ends
 }
 
 function draw() {
-    background(135, 206, 235); // Sky blue background
+    background(135, 206, 235);
 
     if (gameOver) {
-        fill(0);
-        textSize(32);
-        text("Game Over!", width / 2 - 80, height / 2);
-        textSize(20);
-        text("Final Score: " + score, width / 2 - 60, height / 2 + 30);
+        drawGameOverScreen();
         return;
     }
 
+    drawGame();
+}
+
+function drawGame() {
     // Update and display balloons
     for (let i = balloons.length - 1; i >= 0; i--) {
         let balloon = balloons[i];
         balloon.update();
         balloon.display();
 
-        // Check if balloon has missed (if it goes below the canvas)
         if (balloon.alive && balloon.y - balloon.radius > height) {
             missedBalloons++;
-            balloon.alive = false; // Mark balloon as not alive after missing
+            balloon.alive = false;
             if (missedBalloons >= 3) {
-                gameOver = true; // End game if 3 balloons are missed
+                gameOver = true;
+                gameWon = false;
+                replayButton.show();
             }
         }
 
-        // Remove popped balloons
         if (!balloon.alive) {
             balloons.splice(i, 1);
         }
     }
 
-    // Display score and missed balloons
+    // Display score
     fill(0);
     textSize(20);
     text("Score: " + score, 10, 30);
-    text("Missed: " + missedBalloons, 10, 50); // Display missed balloons
+    text("Missed: " + missedBalloons, 10, 50);
+}
+
+function drawGameOverScreen() {
+    fill(0);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+
+    if (gameWon) {
+        text("🎉 You Win! 🎉", width / 2, height / 2 - 30);
+    } else {
+        text("💀 Game Over 💀", width / 2, height / 2 - 30);
+    }
+
+    textSize(20);
+    text("Final Score: " + score, width / 2, height / 2);
+    replayButton.show();
+}
+
+function resetGame() {
+    score = 0;
+    missedBalloons = 0;
+    gameOver = false;
+    gameWon = false;
+    balloons = [];
+    replayButton.hide();
 }
 
 // Balloon class
@@ -65,52 +97,53 @@ class Balloon {
         this.y = y;
         this.radius = 20;
         this.alive = true;
-        this.color = this.randomColor(); // Assign a random color from the defined array
+        this.color = this.randomColor();
     }
 
     randomColor() {
-        // Randomly select a color from the colors array
         const randomIndex = floor(random(colors.length));
         return color(colors[randomIndex].value);
     }
 
     update() {
         if (this.alive) {
-            this.y -= 2; // Move balloon up
-            // No need to set alive to false here, check in draw
+            this.y -= 2;
         }
     }
 
     display() {
         if (this.alive) {
-            fill(this.color); // Use the balloon's assigned color
+            fill(this.color);
             ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
         }
     }
 
     pop() {
-        this.alive = false; // Mark balloon as popped
-        score += 1; // Increase score
+        this.alive = false;
+        score += 1;
         if (score >= targetScore) {
-            gameOver = true; // End game when target score is reached
+            gameOver = true;
+            gameWon = true;
+            replayButton.show();
         }
     }
 }
 
-// Add a new balloon
 function addBalloon() {
-    let x = random(20, width - 20); // Random x position
-    let balloon = new Balloon(x, height);
-    balloons.push(balloon);
+    if (!gameOver) {
+        let x = random(20, width - 20);
+        balloons.push(new Balloon(x, height));
+    }
 }
 
-// Handle mouse clicks
 function mousePressed() {
+    if (gameOver) return;
+
     for (let i = 0; i < balloons.length; i++) {
         let balloon = balloons[i];
         let d = dist(mouseX, mouseY, balloon.x, balloon.y);
         if (d < balloon.radius && balloon.alive) {
-            balloon.pop(); // Pop the balloon
+            balloon.pop();
         }
     }
 }
