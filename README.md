@@ -38,8 +38,6 @@ Improve timing and rhythm through **coordinated jumping mechanics**.
 
 ---
 
----
-
 ## 📁 Getting Started
 
 1. **Clone the repository**
