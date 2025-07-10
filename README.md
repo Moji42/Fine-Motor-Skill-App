@@ -38,11 +38,6 @@ Improve timing and rhythm through **coordinated jumping mechanics**.
 
 ---
 
-## 📹 Demo
-
-A gameplay demo is included in the repository:  
-📽️ **videoplayback.mp4**
-
 ---
 
 ## 📁 Getting Started
